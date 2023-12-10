@@ -9,7 +9,6 @@ import (
 
 type (
 	RequestLogin struct {
-		FullName    string
 		PhoneNumber string
 		Password    string
 	}

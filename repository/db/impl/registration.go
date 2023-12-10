@@ -14,7 +14,7 @@ func (r *repository) Registration(ctx context.Context, req model.RequestRegistra
 		return res, err
 	}
 	result, err := tx.ExecContext(ctx, "INSERT INTO users (fullname,phonenumber,password) values ($1, $2, $3) ON CONFLICT DO NOTHING",
-		req.FullName, req.PhoneNumber, req.Password)
+		req.FullName, req.PhoneNumber, r.bcrypt.GeneratePassword(req.Password))
 	if err != nil {
 		return res, err
 	}
