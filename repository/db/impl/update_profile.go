@@ -13,13 +13,13 @@ func (r *repository) UpdateProfile(ctx context.Context, req model.RequestUpdateP
 		return res, err
 	}
 	// #1 update profile name
-	_, err = tx.ExecContext(ctx, "UPDATE users set fullname=$1 WHERE id = $2",
+	_, err = tx.ExecContext(ctx, "UPDATE users set fullname=$1, update_time = now() WHERE id = $2",
 		req.FullName, req.ID)
 	if err != nil {
 		return res, err
 	}
 	// #2 update phone number
-	_, err = tx.ExecContext(ctx, "UPDATE users set phonenumber=$1 WHERE id = $2",
+	_, err = tx.ExecContext(ctx, "UPDATE users set phonenumber=$1, update_time = now() WHERE id = $2",
 		req.PhoneNumber, req.ID)
 	if err != nil {
 		return res, err
