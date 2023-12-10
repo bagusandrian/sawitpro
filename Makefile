@@ -10,7 +10,7 @@ build:
 
 run:
 	@echo " > Running [sawit-pro]..."
-	@cd ./cmd && go run main.go && cd ../ 
+	@cd ./cmd && go build && ./cmd && cd ../
 
 
 init:
