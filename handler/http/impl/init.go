@@ -28,9 +28,5 @@ func New(
 		config:       cfg,
 		dbRepository: dbRepository,
 	}
-	// router.HandleFunc("/registration", h.Registration).Methods("POST")
-	// router.HandleFunc("/login", h.Login).Methods("POST")
-	// router.HandleFunc("/get_my_profile", h.GetProfile).Methods("GET")
-	// router.HandleFunc("/update_profile", h.UpdateProfile).Methods("POST")
 	return h
 }
