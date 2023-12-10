@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/bagusandrian/sawitpro/helper"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type (
@@ -47,16 +46,9 @@ func (model *RequestRegistration) ParseFromHTTPRequest(r *http.Request) []string
 	if len(errors) > 0 {
 		return errors
 	}
-
-	// Hash and salt the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		errors = append(errors, "internal server error")
-		return errors
-	}
 	model.FullName = fullName
 	model.PhoneNumber = phoneNumber
-	model.Password = string(hashedPassword)
+	model.Password = password
 
 	return nil
 }

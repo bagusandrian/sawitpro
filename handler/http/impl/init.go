@@ -3,6 +3,7 @@ package impl
 import (
 	"github.com/bagusandrian/sawitpro/config"
 	httpSawitPro "github.com/bagusandrian/sawitpro/handler/http"
+	bcryptImpl "github.com/bagusandrian/sawitpro/helper/bcrypt/impl"
 	"github.com/bagusandrian/sawitpro/repository/db"
 	dbImpl "github.com/bagusandrian/sawitpro/repository/db/impl"
 	"github.com/bagusandrian/sawitpro/resouce"
@@ -22,7 +23,8 @@ func New(
 ) httpSawitPro.Handler {
 
 	// init repository
-	dbRepository := dbImpl.New(resource.DBMaster, resource.DBSlave, cfg)
+	bcryptRepository := bcryptImpl.New(cfg)
+	dbRepository := dbImpl.New(resource.DBMaster, resource.DBSlave, bcryptRepository, cfg)
 	h := &handler{
 		config:       cfg,
 		dbRepository: dbRepository,
