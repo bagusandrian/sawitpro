@@ -6,7 +6,7 @@ func (r *repository) GeneratePassword(password string) string {
 	bytePassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytePassword)
 }
-func (r *repository) ComparePassword(passwordReq, PasswordDB string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(passwordReq), []byte(PasswordDB))
+func (r *repository) ComparePassword(passwordHash, passwordReq string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(passwordReq))
 	return err == nil
 }

@@ -24,7 +24,7 @@ func (r *repository) Login(ctx context.Context, req model.RequestLogin) (res mod
 		return res, err
 	}
 	// validation
-	if !r.bcrypt.ComparePassword(req.Password, password) {
+	if !r.bcrypt.ComparePassword(password, req.Password) {
 		return res, errors.New("password is wrong")
 	}
 	// if bcrypt.CompareHashAndPassword([]byte(password), []byte(req.Password)) != nil {
