@@ -27,9 +27,6 @@ func (r *repository) Login(ctx context.Context, req model.RequestLogin) (res mod
 	if !r.bcrypt.ComparePassword(password, req.Password) {
 		return res, errors.New("password is wrong")
 	}
-	// if bcrypt.CompareHashAndPassword([]byte(password), []byte(req.Password)) != nil {
-	// 	return res, errors.New("password is wrong")
-	// }
 	// Generate JWT
 	token, err := helper.GenerateJWT(id, r.cfg.Server.JWTSecretKey)
 	return model.ResponseLogin{

@@ -9,13 +9,13 @@ type MockRepository struct {
 	mock.Mock
 }
 
-// ComparePassword provides a mock function with given fields: password, passwordHash
-func (_m *MockRepository) ComparePassword(password string, passwordHash string) bool {
-	ret := _m.Called(password, passwordHash)
+// ComparePassword provides a mock function with given fields: passwordHash, passwordReq
+func (_m *MockRepository) ComparePassword(passwordHash string, passwordReq string) bool {
+	ret := _m.Called(passwordHash, passwordReq)
 
 	var r0 bool
 	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
-		r0 = rf(password, passwordHash)
+		r0 = rf(passwordHash, passwordReq)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}

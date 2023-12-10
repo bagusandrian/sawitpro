@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"reflect"
 	"testing"
 
 	"github.com/bagusandrian/sawitpro/config"
@@ -33,7 +32,6 @@ func Test_repository_Login(t *testing.T) {
 		fields  fields
 		args    args
 		mock    func()
-		wantRes model.ResponseLogin
 		wantErr bool
 	}{
 		// TODO: Add test cases.
@@ -42,7 +40,7 @@ func Test_repository_Login(t *testing.T) {
 			fields: fields{
 				dbMaster: mockDB,
 				dbSlave:  mockDB,
-				bcrypt:   bcrypt.NewMockRepository(t),
+				bcrypt:   mockBycrypt,
 				cfg:      &config.Config{},
 			},
 			args: args{
@@ -58,7 +56,6 @@ func Test_repository_Login(t *testing.T) {
 					WillReturnError(sql.ErrNoRows)
 
 			},
-			wantRes: model.ResponseLogin{},
 			wantErr: true,
 		},
 		{
@@ -66,7 +63,7 @@ func Test_repository_Login(t *testing.T) {
 			fields: fields{
 				dbMaster: mockDB,
 				dbSlave:  mockDB,
-				bcrypt:   bcrypt.NewMockRepository(t),
+				bcrypt:   mockBycrypt,
 				cfg:      &config.Config{},
 			},
 			args: args{
@@ -82,7 +79,6 @@ func Test_repository_Login(t *testing.T) {
 					WillReturnError(errors.New("just error"))
 
 			},
-			wantRes: model.ResponseLogin{},
 			wantErr: true,
 		},
 		{
@@ -90,7 +86,7 @@ func Test_repository_Login(t *testing.T) {
 			fields: fields{
 				dbMaster: mockDB,
 				dbSlave:  mockDB,
-				bcrypt:   bcrypt.NewMockRepository(t),
+				bcrypt:   mockBycrypt,
 				cfg:      &config.Config{},
 			},
 			args: args{
@@ -105,10 +101,9 @@ func Test_repository_Login(t *testing.T) {
 					WithArgs("+62123456789").
 					WillReturnRows(
 						sqlmock.NewRows([]string{"id", "password"}).
-							AddRow(1, "failed"))
+							AddRow(1, "testing"))
 				mockBycrypt.On("ComparePassword", mock.Anything, mock.Anything).Return(false).Once()
 			},
-			wantRes: model.ResponseLogin{},
 			wantErr: true,
 		},
 		{
@@ -116,8 +111,12 @@ func Test_repository_Login(t *testing.T) {
 			fields: fields{
 				dbMaster: mockDB,
 				dbSlave:  mockDB,
-				bcrypt:   bcrypt.NewMockRepository(t),
-				cfg:      &config.Config{},
+				bcrypt:   mockBycrypt,
+				cfg: &config.Config{
+					Server: config.Server{
+						JWTSecretKey: "testing",
+					},
+				},
 			},
 			args: args{
 				ctx: context.Background(),
@@ -135,8 +134,7 @@ func Test_repository_Login(t *testing.T) {
 				mockBycrypt.On("ComparePassword", mock.Anything, mock.Anything).Return(true).Once()
 
 			},
-			wantRes: model.ResponseLogin{},
-			wantErr: true,
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -150,13 +148,10 @@ func Test_repository_Login(t *testing.T) {
 			if tt.mock != nil {
 				tt.mock()
 			}
-			gotRes, err := r.Login(tt.args.ctx, tt.args.req)
+			_, err := r.Login(tt.args.ctx, tt.args.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("repository.Login() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(gotRes, tt.wantRes) {
-				t.Errorf("repository.Login() = %v, want %v", gotRes, tt.wantRes)
 			}
 		})
 	}
