@@ -1,54 +1,76 @@
-# Backend Engineering Interview Assignment (Golang)
+# Sawit Pro
 
-## Requirements
+This repo provide API using golang. 
 
-To run this project you need to have the following installed:
+## Overview
 
-1. [Go](https://golang.org/doc/install) version 1.19
-2. [Docker](https://docs.docker.com/get-docker/) version 20
-3. [Docker Compose](https://docs.docker.com/compose/install/) version 1.29
-4. [GNU Make](https://www.gnu.org/software/make/)
-5. [oapi-codegen](https://github.com/deepmap/oapi-codegen)
+This service provides 4 endpoints (registration, login, get profile, and update profile). 
 
-    Install the latest version with:
-    ```
-    go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
-    ```
-6. [mock](https://github.com/golang/mock)
+## Prerequisites
 
-    Install the latest version with:
-    ```
-    go install github.com/golang/mock/mockgen@latest
-    ```
+- go with min version 1.16
+- docker (if u want using docker)
 
-## Initiate The Project
+## Getting Started
 
-To start working, execute
+### Installation
 
-```
-make init
-```
+1. Run `make init` to initialize the repository.
+2. Run `make test` to run the unit tests.
+3. Run `make run` to start the application on your local machine (make sure to run `make init` first) will be reserve port `:8002`, u can change the port on `files/etc/developmen/config.yaml`.
+4. Run `docker-compose up` to start the application, including the database.
 
-## Running
+Your application should be accessible through the base URL [http://localhost:8080/](http://localhost:8080/).
 
-To run the project, run the following command:
+## API Endpoints
 
-```
-docker-compose up --build
-```
+### 1. `/registration` [POST]
 
-You should be able to access the API at http://localhost:8080
+#### Request
 
-If you change `database.sql` file, you need to reinitate the database by running:
+- **Full Name**: (Minimum 3, Maximum 60 characters)
+- **Phone Number**: (Minimum 10, Maximum 13 characters, Indonesian code +62)
+- **Password**: (Minimum 6, Maximum 64 characters, at least 1 capital, 1 number, and 1 special character)
 
-```
-docker-compose down --volumes
-```
+#### Response
 
-## Testing
+Include information about the expected response and any error codes.
 
-To run test, run the following command:
+### 2. `/login` [POST]
 
-```
-make test
-```
+#### Request
+
+- **Phone Number**
+- **Password**
+
+#### Response
+
+Include information about the expected response and any error codes.
+
+### 3. `/get_my_profile` [GET]
+
+#### Request
+
+- **Authorization Header**: Bearer Token (JWT)
+
+#### Response
+
+Include information about the expected response and any error codes.
+
+### 4. `/update_profile` [POST]
+
+#### Request
+
+- **Authorization Header**: Bearer Token (JWT)
+- **Phone Number OR Full Name**: Update the fields that exist in the request
+
+#### Response
+
+Include information about the expected response and any error codes.
+
+## Makefile Commands
+
+- `make init`: Initialize the repository.
+- `make test`: Run unit tests.
+- `make run`: Run the application on your local machine.
+- `docker-compose up`: Start the application, including the database.
