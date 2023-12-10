@@ -1,0 +1,17 @@
+server:
+  jwt_secret_key: "1234567890"
+  http:
+    address: ":8002"
+database:
+  master:
+    host: "localhost"
+    port: 5432
+    user: "bagus.andrian"
+    password: "1234567890"
+    dbname: "sawitpro"
+  slave:
+    host: "localhost"
+    port: 5432
+    user: "bagus.andrian"
+    password: "1234567890"
+    dbname: "sawitpro"

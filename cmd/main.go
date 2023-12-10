@@ -1,31 +1,28 @@
 package main
 
 import (
-	"os"
+	"context"
+	"log"
+	"net/http"
 
-	"github.com/SawitProRecruitment/UserService/generated"
-	"github.com/SawitProRecruitment/UserService/handler"
-	"github.com/SawitProRecruitment/UserService/repository"
-
-	"github.com/labstack/echo/v4"
+	"github.com/bagusandrian/sawitpro/config"
+	httpSawitProImpl "github.com/bagusandrian/sawitpro/handler/http/impl"
+	"github.com/bagusandrian/sawitpro/resouce"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	e := echo.New()
-
-	var server generated.ServerInterface = newServer()
-
-	generated.RegisterHandlers(e, server)
-	e.Logger.Fatal(e.Start(":1323"))
-}
-
-func newServer() *handler.Server {
-	dbDsn := os.Getenv("DATABASE_URL")
-	var repo repository.RepositoryInterface = repository.NewRepository(repository.NewRepositoryOptions{
-		Dsn: dbDsn,
-	})
-	opts := handler.NewServerOptions{
-		Repository: repo,
+	ctx := context.Background()
+	conf, err := config.New(ctx)
+	if err != nil {
+		log.Panicf("failed to init the config: %v", err)
 	}
-	return handler.NewServer(opts)
+	router := mux.NewRouter()
+	resource, err := resouce.InitResource(conf)
+	if err != nil {
+		log.Panicf("failed to init the resource: %v", err)
+	}
+	httpSawitProImpl.New(router, conf, resource)
+	log.Printf("Server is running on port %s\n", conf.Server.HTTP.Address)
+	log.Fatal(http.ListenAndServe(conf.Server.HTTP.Address, router))
 }

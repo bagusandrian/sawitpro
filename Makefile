@@ -1,34 +1,24 @@
 
 
-.PHONY: clean all init generate generate_mocks
+.PHONY: build
 
-all: build/main
+# build
+build: 
+	@echo " > Building [sawit-pro]..."
+	@cd ./cmd && go build -o ../bin/sawit-pro && cd ../ 
+	@echo "success build binary sawit pro bin/sawit-pro"
 
-build/main: cmd/main.go generated
-	@echo "Building..."
-	go build -o $@ $<
+run: build
 
-clean:
-	rm -rf generated
+	@echo " > Running [sawit-pro]..."
+	@./bin/sawit-pro
+	@echo " > Finished running [sawit-pro]"
 
-init: generate
+init:
 	go mod tidy
 	go mod vendor
 
+run-docker: 
+	docker-compose up --build
 test:
 	go test -short -coverprofile coverage.out -v ./...
-
-generate: generated generate_mocks
-
-generated: api.yml
-	@echo "Generating files..."
-	mkdir generated || true
-	oapi-codegen --package generated -generate types,server,spec $< > generated/api.gen.go
-
-INTERFACES_GO_FILES := $(shell find repository -name "interfaces.go")
-INTERFACES_GEN_GO_FILES := $(INTERFACES_GO_FILES:%.go=%.mock.gen.go)
-
-generate_mocks: $(INTERFACES_GEN_GO_FILES)
-$(INTERFACES_GEN_GO_FILES): %.mock.gen.go: %.go
-	@echo "Generating mocks $@ for $<"
-	mockgen -source=$< -destination=$@ -package=$(shell basename $(dir $<))

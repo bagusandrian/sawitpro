@@ -8,10 +8,15 @@
   */
 
 /** This is test table. Remove this table and replace with your own tables. */
-CREATE TABLE test (
-	id serial PRIMARY KEY,
-	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+CREATE TABLE users (
+	id bigserial PRIMARY KEY,
+	fullname varchar(60) NOT NULL,
+  phonenumber varchar(13) not null,
+  password text not null, 
+  create_time timestamptz default now(),
+  update_time timestamptz null,
+  success_login bigint default 0
 );
-
-INSERT INTO test (name) VALUES ('test1');
-INSERT INTO test (name) VALUES ('test2');
+ALTER TABLE users ADD UNIQUE (phonenumber);
+create index "users_phonenumber" on users (phonenumber);
+create index "users_fullname" on users (fullname);
