@@ -19,9 +19,9 @@ func (r *repository) Login(ctx context.Context, req model.RequestLogin) (res mod
 		return res, errors.New("password is wrong")
 	}
 	// Generate JWT
-	token := helper.GenerateJWT(id, r.cfg.Server.JWTSecretKey)
+	token, err := helper.GenerateJWT(id, r.cfg.Server.JWTSecretKey)
 	return model.ResponseLogin{
 		ID:       id,
 		JWTToken: token,
-	}, nil
+	}, err
 }

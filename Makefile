@@ -8,11 +8,10 @@ build:
 	@cd ./cmd && go build -o ../bin/sawit-pro && cd ../ 
 	@echo "success build binary sawit pro bin/sawit-pro"
 
-run: build
-
+run:
 	@echo " > Running [sawit-pro]..."
-	@./bin/sawit-pro
-	@echo " > Finished running [sawit-pro]"
+	@cd ./cmd && go run main.go && cd ../ 
+
 
 init:
 	go mod tidy

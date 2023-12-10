@@ -14,7 +14,7 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID int64, secretKey string) string {
+func GenerateJWT(userID int64, secretKey string) (string, error) {
 	newClaim := CustomClaims{
 		userID,
 		jwt.RegisteredClaims{
@@ -25,8 +25,11 @@ func GenerateJWT(userID int64, secretKey string) string {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, newClaim)
-	tokenString, _ := token.SignedString([]byte(secretKey))
-	return tokenString
+	tokenString, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
 
 func ExtractTokenFromHeader(r *http.Request) string {
@@ -50,7 +53,7 @@ func VerifyToken(tokenString string, secretKey []byte) (*jwt.MapClaims, error) {
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, fmt.Errorf("Invalid token claims")
+		return nil, fmt.Errorf("invalid token claims")
 	}
 	return &claims, nil
 }
