@@ -107,7 +107,7 @@ func Test_repository_Login(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "success",
+			name: "failed exec",
 			fields: fields{
 				dbMaster: mockDB,
 				dbSlave:  mockDB,
@@ -132,9 +132,14 @@ func Test_repository_Login(t *testing.T) {
 						sqlmock.NewRows([]string{"id", "password"}).
 							AddRow(1, "testing"))
 				mockBycrypt.On("ComparePassword", mock.Anything, mock.Anything).Return(true).Once()
+				mockQuery.ExpectBegin()
+				mockQuery.ExpectRollback()
+				mockQuery.ExpectExec("UPDATE users (.+)").
+					WithArgs("1").WillReturnResult(sqlmock.NewResult(0, 1))
+				mockQuery.ExpectCommit()
 
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
