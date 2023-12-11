@@ -27,47 +27,112 @@ Your application should be accessible through the base URL [http://localhost:808
 ### 1. `/registration` [POST]
 
 #### Request
+| Field | Data type | Info | Mandatory |
+| ------| --------- | ---- | --------- |
+| fullname | string | full name of user. Minimum 3, Maximum 60 characters | YES |
+| phonenumber | string | phone number of user. Minimum 10, Maximum 13 characters, Indonesian code +62 | YES |
+| password | string | password of user. Minimum 6, Maximum 64 characters, at least 1 capital, 1 number, and 1 special character | YES |
 
-- **Full Name**: (Minimum 3, Maximum 60 characters)
-- **Phone Number**: (Minimum 10, Maximum 13 characters, Indonesian code +62)
-- **Password**: (Minimum 6, Maximum 64 characters, at least 1 capital, 1 number, and 1 special character)
+#### example request curl: 
+```
+curl --location 'localhost:8002/registration' \
+--form 'fullname="budi"' \
+--form 'phonenumber="+62812345678"' \
+--form 'password="I23a$6j890"'
+```
 
-#### Response
-
-Include information about the expected response and any error codes.
+#### example response: 
+```
+{
+    "data": {
+        "id": 0,
+        "fullname": "budi",
+        "phonenumber": "+62812345678",
+        "error_message": null
+    }
+}
+```
 
 ### 2. `/login` [POST]
 
+On this endpoint, u need put `phonenumber` and `password` to get `JWTToken` and will be use for `/get_my_profile` and `/get_my_profile`. 
+
 #### Request
 
-- **Phone Number**
-- **Password**
+| Field | Data type | Info | Mandatory |
+| ------| --------- | ---- | --------- |
+| phonenumber | string | phone number of user. Minimum 10, Maximum 13 characters, Indonesian code +62 | YES |
+| password | string | password of user. Minimum 6, Maximum 64 characters, at least 1 capital, 1 number, and 1 special character | YES |
 
-#### Response
+#### example request curl: 
+```
+curl --location 'localhost:8002/login' \
+--form 'phonenumber="+62812345678"' \
+--form 'password="I23a$6j890"'
+```
 
-Include information about the expected response and any error codes.
+#### example response: 
+```
+{
+    "data": {
+        "ID": 2,
+        "JWTToken": "exampleOfJWTToken"
+    }
+}
+```
 
 ### 3. `/get_my_profile` [GET]
 
 #### Request
 
-- **Authorization Header**: Bearer Token (JWT)
+On this endpoint u need add `header` with key `Authorization` and value coming from `JWTToken` as mandatory field. 
 
-#### Response
+#### example request curl: 
+```
+curl --location 'localhost:8002/get_my_profile' \
+--header 'Authorization: Bearer tokenFromLoginEndpointJWTToken'
+```
 
-Include information about the expected response and any error codes.
+#### example response: 
+```
+{
+    "data": {
+        "FullName": "budi",
+        "PhoneNumber": "+62812345678"
+    }
+}
+```
 
 ### 4. `/update_profile` [POST]
 
+On this endpoint, u can edit phone number and fullname of user.
+
 #### Request
 
-- **Authorization Header**: Bearer Token (JWT)
-- **Phone Number OR Full Name**: Update the fields that exist in the request
+| Field | Data type | Info | Mandatory |
+| ------| --------- | ---- | --------- |
+| fullname | string | full name of user. Minimum 3, Maximum 60 characters | YES |
+| phonenumber | string | phone number of user. Minimum 10, Maximum 13 characters, Indonesian code +62 | YES |
 
-#### Response
+#### example request curl: 
+```
+curl --location 'localhost:8002/update_profile' \
+--header 'Authorization: Bearer tokenFromLoginEndpointJWTToken' \
+--form 'phonenumber="+62812345678"' \
+--form 'fullname="samsul ganti neh"'
+```
 
-Include information about the expected response and any error codes.
-
+#### example response: 
+```
+{
+    "data": {
+        "FullName": "samsul ganti neh",
+        "PhoneNumber": "+62812345678",
+        "SuccessMessage": "success",
+        "ErrorMessage": ""
+    }
+}
+```
 ## Makefile Commands
 
 - `make init`: Initialize the repository.
